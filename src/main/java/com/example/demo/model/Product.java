@@ -6,15 +6,15 @@ import java.time.LocalDateTime;
 @Table(
     name="products",
     uniqueConstraints={
-        @UniqueConstraint(colmunNmaes="sku")
+        @UniqueConstraint(colmunNames="sku")
     }
 )
 public class Product{
     @Id
     GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;
-    @NoBlank(message="product name must not be empty")
+    @NotBlank(message="product name must not be empty")
     @Column(nullable=false)
     private String productName;
-    @Column(nulable=false,unique=true)
+    @Column(nullable=false,unique=true)
 }    
