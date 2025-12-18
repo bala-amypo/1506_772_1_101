@@ -16,5 +16,5 @@ public class Product{
     @NoBlank(message="product name must not be empty")
     @Column(nullable=false)
     private String productName;
-    
-}
+    @Column(nulable=false,unique=true)
+}    
