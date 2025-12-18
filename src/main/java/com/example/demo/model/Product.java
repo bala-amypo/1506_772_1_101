@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 @Table(
     name="products",
     uniqueConstraints={
-        @UniqueConstraint(colmunNames="sku")
+        @UniqueConstraint(columnNames="sku")
     }
 )
 public class Product{
@@ -45,6 +45,13 @@ public class Product{
     public String getCategory(){
         return Category;
     }
-    public void setCate
+    public void setCategory(String category){
+        this.categroy=category;
+    }
+    public void setCreatedAt(LocalDateTime createdAt){
+        this.createdAt=createdAt;
+
+    }
+
 
 }    
