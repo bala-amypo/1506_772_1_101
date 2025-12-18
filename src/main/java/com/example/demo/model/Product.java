@@ -13,8 +13,19 @@ public class Product{
     @Id
     GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;
-    @NotBlank(message="product name must not be empty")
+    @NotBlank(message="Product name must not be empty")
     @Column(nullable=false)
     private String productName;
     @Column(nullable=false,unique=true)
+    private String sku;
+    private String category;
+    private LocalDateTime createdAt;
+    pubilc Product(){
+        this.createdAt=LocalDateTime.now();
+    }
+    public Long getId(){
+        return id;
+    }
+    public void setId(Long id)===============
+
 }    
