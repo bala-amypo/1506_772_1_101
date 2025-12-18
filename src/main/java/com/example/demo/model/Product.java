@@ -14,6 +14,7 @@ public class Product{
     GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;
     @NoBlank(message="product name must not be empty")
-    @Column(nullable=false,unique=true)
+    @Column(nullable=false)
     private String productName;
+    
 }
