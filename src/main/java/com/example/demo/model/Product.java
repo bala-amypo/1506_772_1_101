@@ -12,4 +12,8 @@ import java.time.LocalDateTime;
 public class Product{
     @Id
     GeneratedValue(strategy=GenerationType.IDENTITY)
+    private Long id;
+    @NoBlank(message="product name must not be empty")
+    @Column(nullable=false,unique=true)
+    private String productName;
 }
