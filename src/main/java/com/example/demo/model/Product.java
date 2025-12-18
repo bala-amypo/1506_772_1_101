@@ -26,7 +26,25 @@ public class Product{
     public Long getId(){
         return id;
     }
-    public void setId
-    
+    public void setId(Long id){
+        this.id=id;
+
+    }
+    public String getProductName(){
+        return productName;
+    }
+    public void setProductName(String productName){
+        this.productName=productName;
+    }
+    public String getSku(){
+        return sku;
+    }
+    public void setSku(String sku){
+        this.sku=sku;
+    }
+    public String getCategory(){
+        return Category;
+    }
+    public void setCate
 
 }    
