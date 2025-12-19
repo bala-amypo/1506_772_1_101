@@ -1,64 +1,31 @@
 package com.example.demo.service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.example.demo.entity.Product;
-import com.example.demo.entity.StockRecord;
-import com.example.demo.entity.Warehouse;
+import com.example.demo.model.Product;
 import com.example.demo.repository.ProductRepository;
-import com.example.demo.repository.StockRecordRepository;
-import com.example.demo.repository.WarehouseRepository;
 
 @Service
-public class StockRecordServiceImpl implements StockRecordService {
-
-    @Autowired
-    private StockRecordRepository stockRecordRepository;
+public class ProductServiceImpl implements ProductService {
 
     @Autowired
     private ProductRepository productRepository;
 
-    @Autowired
-    private WarehouseRepository warehouseRepository;
-
     @Override
-    public StockRecord createStockRecord(Long productId, Long warehouseId, StockRecord record) {
-        Product product = productRepository.findById(productId).orElse(null);
-        Warehouse warehouse = warehouseRepository.findById(warehouseId).orElse(null);
-
-        if (product == null || warehouse == null) return null;
-
-        if (stockRecordRepository.findByProductAndWarehouse(product, warehouse) != null)
-            return null;
-
-        if (record.getCurrentQuantity() < 0 || record.getReorderThreshold() <= 0)
-            return null;
-
-        record.setProduct(product);
-        record.setWarehouse(warehouse);
-        record.setLastUpdated(LocalDateTime.now());
-
-        return stockRecordRepository.save(record);
+    public Product createProduct(Product product) {
+        return productRepository.save(product);
     }
 
     @Override
-    public StockRecord getStockRecord(Long id) {
-        return stockRecordRepository.findById(id).orElse(null);
+    public Product getProduct(Long id) {
+        return productRepository.findById(id).orElse(null);
     }
 
     @Override
-    public List<StockRecord> getRecordsByProduct(Long productId) {
-        Product product = productRepository.findById(productId).orElse(null);
-        return product == null ? List.of() : stockRecordRepository.findByProduct(product);
-    }
-
-    @Override
-    public List<StockRecord> getRecordsByWarehouse(Long warehouseId) {
-        Warehouse warehouse = warehouseRepository.findById(warehouseId).orElse(null);
-        return warehouse == null ? List.of() : stockRecordRepository.findByWarehouse(warehouse);
+    public List<Product> getAllProducts() {
+        return productRepository.findAll();
     }
 }
