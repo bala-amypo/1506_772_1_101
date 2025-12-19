@@ -1,8 +1,5 @@
 package com.example.demo.model;
 
-import java.time.LocalDateTime;
-
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -16,16 +13,10 @@ public class Product {
     private Long id;
 
     private String productName;
-
-    @Column(unique = true)
     private String sku;
-
     private String category;
 
-    private LocalDateTime createdAt;
-
     public Product() {
-        this.createdAt = LocalDateTime.now();
     }
 
     public Long getId() {
@@ -58,9 +49,5 @@ public class Product {
 
     public void setCategory(String category) {
         this.category = category;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
     }
 }
