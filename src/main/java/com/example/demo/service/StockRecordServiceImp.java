@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.demo.model.Product;
 import com.example.demo.model.StockRecord;
-import com.example.demo.entity.Warehouse;
+import com.example.demo.model.Warehouse;
 import com.example.demo.repository.ProductRepository;
 import com.example.demo.repository.StockRecordRepository;
 import com.example.demo.repository.WarehouseRepository;
