@@ -1,13 +1,11 @@
-package com.example.demo.repository;
+package com.example.demo.service;
 
 import java.util.List;
-import org.springframework.data.jpa.repository.JpaRepository;
-import com.example.demo.model.StockRecord;
-import com.example.demo.model.Product;
-import com.example.demo.model.Warehouse;
+import com.example.demo.entity.StockRecord;
 
-public interface StockRecordRepository extends JpaRepository<StockRecord, Long> {
-    StockRecord findByProductAndWarehouse(Product product, Warehouse warehouse);
-    List<StockRecord> findByProduct(Product product);
-    List<StockRecord> findByWarehouse(Warehouse warehouse);
+public interface StockRecordService {
+    StockRecord createStockRecord(Long productId, Long warehouseId, StockRecord record);
+    StockRecord getStockRecord(Long id);
+    List<StockRecord> getRecordsByProduct(Long productId);
+    List<StockRecord> getRecordsByWarehouse(Long warehouseId);
 }
