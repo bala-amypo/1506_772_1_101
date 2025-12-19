@@ -1,30 +1,44 @@
 package com.example.demo.controller;
 
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import com.example.demo.entity.Warehouse;
-import com.example.demo.service.WarehouseService;
+
+import com.example.demo.entity.StockRecord;
+import com.example.demo.service.StockRecordService;
 
 @RestController
-@RequestMapping("/api/warehouses")
-public class WarehouseController {
+@RequestMapping("/api/stocks")
+public class StockRecordController {
 
     @Autowired
-    private WarehouseService warehouseService;
+    private StockRecordService stockRecordService;
 
-    @PostMapping("/create")
-    public Warehouse createWarehouse(@RequestBody Warehouse warehouse) {
-        return warehouseService.createWarehouse(warehouse);
+    // POST - create stock record
+    @PostMapping("/create/{productId}/{warehouseId}")
+    public StockRecord createStockRecord(
+            @PathVariable Long productId,
+            @PathVariable Long warehouseId,
+            @RequestBody StockRecord record) {
+        return stockRecordService.createStockRecord(productId, warehouseId, record);
     }
 
-    @GetMapping("/all")
-    public List<Warehouse> getAllWarehouses() {
-        return warehouseService.getAllWarehouses();
-    }
-
+    // GET - get stock record by id
     @GetMapping("/{id}")
-    public Warehouse getWarehouse(@PathVariable Long id) {
-        return warehouseService.getWarehouse(id);
+    public StockRecord getStockRecord(@PathVariable Long id) {
+        return stockRecordService.getStockRecord(id);
+    }
+
+    // GET - get all stock records for a product
+    @GetMapping("/product/{productId}")
+    public List<StockRecord> getRecordsByProduct(@PathVariable Long productId) {
+        return stockRecordService.getRecordsByProduct(productId);
+    }
+
+    // GET - get all stock records for a warehouse
+    @GetMapping("/warehouse/{warehouseId}")
+    public List<StockRecord> getRecordsByWarehouse(@PathVariable Long warehouseId) {
+        return stockRecordService.getRecordsByWarehouse(warehouseId);
     }
 }
