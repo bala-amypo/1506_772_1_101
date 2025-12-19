@@ -1,11 +1,9 @@
 package com.example.demo.controller;
 
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import com.example.demo.model.StockRecord;
+import com.example.demo.entity.StockRecord;
 import com.example.demo.service.StockRecordService;
 
 @RestController
@@ -15,28 +13,23 @@ public class StockRecordController {
     @Autowired
     private StockRecordService stockRecordService;
 
-    // POST - create stock record
     @PostMapping("/create/{productId}/{warehouseId}")
-    public StockRecord createStockRecord(
-            @PathVariable Long productId,
-            @PathVariable Long warehouseId,
-            @RequestBody StockRecord record) {
+    public StockRecord createStockRecord(@PathVariable Long productId,
+                                         @PathVariable Long warehouseId,
+                                         @RequestBody StockRecord record) {
         return stockRecordService.createStockRecord(productId, warehouseId, record);
     }
 
-    // GET - get stock record by id
     @GetMapping("/{id}")
     public StockRecord getStockRecord(@PathVariable Long id) {
         return stockRecordService.getStockRecord(id);
     }
 
-    // GET - get all stock records for a product
     @GetMapping("/product/{productId}")
     public List<StockRecord> getRecordsByProduct(@PathVariable Long productId) {
         return stockRecordService.getRecordsByProduct(productId);
     }
 
-    // GET - get all stock records for a warehouse
     @GetMapping("/warehouse/{warehouseId}")
     public List<StockRecord> getRecordsByWarehouse(@PathVariable Long warehouseId) {
         return stockRecordService.getRecordsByWarehouse(warehouseId);
