@@ -1,67 +1,40 @@
 package com.example.demo.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "prediction_rules")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class PredictionRule {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(unique = true, nullable = false)
+    
+    @Column(name = "rule_name", unique = true, nullable = false)
     private String ruleName;
-
+    
+    @Column(name = "average_days_window")
     private Integer averageDaysWindow;
+    
+    @Column(name = "min_daily_usage")
     private Integer minDailyUsage;
+    
+    @Column(name = "max_daily_usage")
     private Integer maxDailyUsage;
+    
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
-
-    // ---------- Getters & Setters ----------
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getRuleName() {
-        return ruleName;
-    }
-
-    public void setRuleName(String ruleName) {
-        this.ruleName = ruleName;
-    }
-
-    public Integer getAverageDaysWindow() {
-        return averageDaysWindow;
-    }
-
-    public void setAverageDaysWindow(Integer averageDaysWindow) {
-        this.averageDaysWindow = averageDaysWindow;
-    }
-
-    public Integer getMinDailyUsage() {
-        return minDailyUsage;
-    }
-
-    public void setMinDailyUsage(Integer minDailyUsage) {
-        this.minDailyUsage = minDailyUsage;
-    }
-
-    public Integer getMaxDailyUsage() {
-        return maxDailyUsage;
-    }
-
-    public void setMaxDailyUsage(Integer maxDailyUsage) {
-        this.maxDailyUsage = maxDailyUsage;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
+    
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
     }
 }
