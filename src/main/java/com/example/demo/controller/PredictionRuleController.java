@@ -1,7 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.model.PredictionRule;
-import com.example.demo.service.PredictionService;
+import com.example.demo.service.PredictionRuleService;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -11,24 +11,25 @@ import java.util.List;
 @RequestMapping("/api/predict")
 public class PredictionRuleController {
 
-    private final PredictionService predictionService;
+    private final PredictionRuleService predictionRuleService;
 
-    public PredictionController(PredictionService predictionService) {
-        this.predictionService = predictionService;
+    // ✅ Constructor name MUST match class name
+    public PredictionRuleController(PredictionRuleService predictionRuleService) {
+        this.predictionRuleService = predictionRuleService;
     }
 
     @PostMapping("/rules")
     public PredictionRule createRule(@RequestBody PredictionRule rule) {
-        return predictionService.createRule(rule);
+        return predictionRuleService.createRule(rule);
     }
 
     @GetMapping("/rules")
     public List<PredictionRule> getAllRules() {
-        return predictionService.getAllRules();
+        return predictionRuleService.getAllRules();
     }
 
     @GetMapping("/restock-date/{stockRecordId}")
     public LocalDate predict(@PathVariable Long stockRecordId) {
-        return predictionService.predictRestockDate(stockRecordId);
+        return predictionRuleService.predictRestockDate(stockRecordId);
     }
 }
