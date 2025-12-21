@@ -1,18 +1,10 @@
 package com.example.demo.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "warehouses")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class Warehouse {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,4 +23,25 @@ public class Warehouse {
     protected void onCreate() {
         createdAt = LocalDateTime.now();
     }
+    
+    // Constructors
+    public Warehouse() {}
+    
+    public Warehouse(String warehouseName, String location) {
+        this.warehouseName = warehouseName;
+        this.location = location;
+    }
+    
+    // Getters and Setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    
+    public String getWarehouseName() { return warehouseName; }
+    public void setWarehouseName(String warehouseName) { this.warehouseName = warehouseName; }
+    
+    public String getLocation() { return location; }
+    public void setLocation(String location) { this.location = location; }
+    
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 }
