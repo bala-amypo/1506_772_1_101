@@ -19,7 +19,7 @@ public class PredictionServiceImpl implements PredictionService {
     }
 
     @Override
-    public PredictionRule createRule(PredictionRule rule) {
+    public PredictionServiceRule createRule(PredictionRule rule) {
 
         // validation
         if (rule.getAverageDaysWindow() <= 0) {
