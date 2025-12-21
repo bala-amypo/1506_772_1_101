@@ -32,3 +32,4 @@ public class PredictionRuleController {
         return predictionRuleService.predictRestockDate(stockRecordId);
     }
 }
+mjkknk
