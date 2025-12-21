@@ -1,12 +1,11 @@
 package com.example.demo.repository;
 
+import com.example.demo.model.ConsumptionLog;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 import java.util.List;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-
-import com.example.demo.model.ConsumptionLog;
-import com.example.demo.model.StockRecord;
-
+@Repository
 public interface ConsumptionLogRepository extends JpaRepository<ConsumptionLog, Long> {
-    List<ConsumptionLog> findByStockRecord(StockRecord stockRecord);
+    List<ConsumptionLog> findByStockRecordId(Long stockRecordId);
 }
