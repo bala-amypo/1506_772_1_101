@@ -1,37 +1,41 @@
 package com.example.demo.controller;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
 import com.example.demo.model.ConsumptionLog;
 import com.example.demo.service.ConsumptionLogService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/consumption")
 public class ConsumptionLogController {
-
+    
+    private final ConsumptionLogService consumptionLogService;
+    
     @Autowired
-    private ConsumptionLogService consumptionLogService;
-
-    // POST - log consumption
+    public ConsumptionLogController(ConsumptionLogService consumptionLogService) {
+        this.consumptionLogService = consumptionLogService;
+    }
+    
     @PostMapping("/{stockRecordId}")
-    public ConsumptionLog logConsumption(
+    public ResponseEntity<ConsumptionLog> logConsumption(
             @PathVariable Long stockRecordId,
             @RequestBody ConsumptionLog log) {
-        return consumptionLogService.logConsumption(stockRecordId, log);
+        ConsumptionLog createdLog = consumptionLogService.logConsumption(stockRecordId, log);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdLog);
     }
-
-    // GET - list logs for stock record
+    
     @GetMapping("/record/{stockRecordId}")
-    public List<ConsumptionLog> getLogsByStockRecord(@PathVariable Long stockRecordId) {
-        return consumptionLogService.getLogsByStockRecord(stockRecordId);
+    public ResponseEntity<List<ConsumptionLog>> getLogsByStockRecord(@PathVariable Long stockRecordId) {
+        List<ConsumptionLog> logs = consumptionLogService.getLogsByStockRecord(stockRecordId);
+        return ResponseEntity.ok(logs);
     }
-
-    // GET - get log by id
+    
     @GetMapping("/{id}")
-    public ConsumptionLog getLog(@PathVariable Long id) {
-        return consumptionLogService.getLog(id);
+    public ResponseEntity<ConsumptionLog> getLog(@PathVariable Long id) {
+        ConsumptionLog log = consumptionLogService.getLog(id);
+        return ResponseEntity.ok(log);
     }
 }
