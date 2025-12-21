@@ -9,7 +9,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/predict")
-public class PredictionRuleController {
+public class PredictionController {
 
     private final PredictionService predictionService;
 

@@ -5,7 +5,7 @@ import com.example.demo.model.PredictionRule;
 import java.time.LocalDate;
 import java.util.List;
 
-public interface PredictionRuleService {
+public interface PredictionService {
 
     PredictionRule createRule(PredictionRule rule);
 

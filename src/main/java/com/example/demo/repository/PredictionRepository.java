@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
-public interface PredictionRuleRepository
+public interface PredictionRepository
         extends JpaRepository<PredictionRule, Long> {
 
     Optional<PredictionRule> findByRuleName(String ruleName);
