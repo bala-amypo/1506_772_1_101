@@ -21,10 +21,13 @@ public class PredictionRule {
     @Column(unique = true, nullable = false)
     private String ruleName;
 
+    @Column(nullable = false)
     private Integer averageDaysWindow;
 
+    @Column(nullable = false)
     private Integer minDailyUsage;
 
+    @Column(nullable = false)
     private Integer maxDailyUsage;
 
     private LocalDateTime createdAt;
