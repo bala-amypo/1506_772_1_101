@@ -1,4 +1,4 @@
-package com.example.demo.controller;
+/*package com.example.demo.controller;
 
 import java.util.List;
 
@@ -29,7 +29,7 @@ public class ProductController {
     public Product getProduct(@PathVariable Long id) {
         return productService.getProduct(id);
     }
-}
+}*/
 package com.example.demo.controller;
 
 import java.util.List;

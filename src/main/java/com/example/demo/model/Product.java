@@ -1,4 +1,4 @@
-package com.example.demo.model;
+/*package com.example.demo.model;
 
 import java.time.LocalDateTime;
 import jakarta.persistence.*;
@@ -40,4 +40,58 @@ public class Product {
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+}*/
+
+
+
+package com.example.demo.model;
+
+import java.time.LocalDateTime;
+import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+@Entity
+@Table(name = "products")
+public class Product {
+    
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
+    private String productName;
+    private String sku;
+    private String category;
+    
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    @Column(updatable = false)
+    private LocalDateTime createdAt;
+    
+    public Product() {}
+    
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+    }
+    
+    // Getters and Setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    
+    public String getProductName() { return productName; }
+    public void setProductName(String productName) { 
+        this.productName = productName; 
+    }
+    
+    public String getSku() { return sku; }
+    public void setSku(String sku) { this.sku = sku; }
+    
+    public String getCategory() { return category; }
+    public void setCategory(String category) { 
+        this.category = category; 
+    }
+    
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { 
+        this.createdAt = createdAt; 
+    }
 }
