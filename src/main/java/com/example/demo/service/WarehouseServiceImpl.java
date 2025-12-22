@@ -1,4 +1,4 @@
-package com.example.demo.service.impl;
+/*package com.example.demo.service.impl;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -46,5 +46,57 @@ public class WarehouseServiceImpl implements WarehouseService {
     @Override
     public List<Warehouse> getAllWarehouses() {
         return warehouseRepository.findAll();
+    }
+}*/
+package com.example.demo.model;
+
+import java.time.LocalDateTime;
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "warehouses")
+public class Warehouse {
+    
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
+    private String warehouseName;
+    private String location;
+    
+    @Column(updatable = false) // Prevent updates to creation timestamp
+    private LocalDateTime createdAt;
+    
+    // Constructors
+    public Warehouse() {}
+    
+    public Warehouse(String warehouseName, String location) {
+        this.warehouseName = warehouseName;
+        this.location = location;
+    }
+    
+    // Automatically set timestamp before saving
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+    }
+    
+    // Getters and Setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    
+    public String getWarehouseName() { return warehouseName; }
+    public void setWarehouseName(String warehouseName) { 
+        this.warehouseName = warehouseName; 
+    }
+    
+    public String getLocation() { return location; }
+    public void setLocation(String location) { 
+        this.location = location; 
+    }
+    
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { 
+        this.createdAt = createdAt; 
     }
 }
