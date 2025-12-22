@@ -48,55 +48,49 @@ public class WarehouseServiceImpl implements WarehouseService {
         return warehouseRepository.findAll();
     }
 }*/
-package com.example.demo.model;
+package com.example.demo.service.impl;
 
 import java.time.LocalDateTime;
-import jakarta.persistence.*;
+import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import com.example.demo.exception.ResourceNotFoundException;
+import com.example.demo.model.Warehouse;
+import com.example.demo.repository.WarehouseRepository;
+import com.example.demo.service.WarehouseService;
 
-@Entity
-@Table(name = "warehouses")
-public class Warehouse {
+@Service
+public class WarehouseServiceImpl implements WarehouseService {
     
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Autowired
+    private WarehouseRepository warehouseRepository;
     
-    private String warehouseName;
-    private String location;
-    
-    @Column(updatable = false) // Prevent updates to creation timestamp
-    private LocalDateTime createdAt;
-    
-    // Constructors
-    public Warehouse() {}
-    
-    public Warehouse(String warehouseName, String location) {
-        this.warehouseName = warehouseName;
-        this.location = location;
+    @Override
+    public Warehouse createWarehouse(Warehouse warehouse) {
+        if (warehouse.getWarehouseName() == null || warehouse.getWarehouseName().isEmpty()) {
+            throw new IllegalArgumentException("warehouseName must not be empty");
+        }
+        if (warehouse.getLocation() == null || warehouse.getLocation().isEmpty()) {
+            throw new IllegalArgumentException("location must not be empty");
+        }
+        
+        warehouseRepository.findByWarehouseName(warehouse.getWarehouseName())
+                .ifPresent(w -> {
+                    throw new IllegalArgumentException("warehouseName already exists");
+                });
+        
+        warehouse.setCreatedAt(LocalDateTime.now());
+        return warehouseRepository.save(warehouse);
     }
     
-    // Automatically set timestamp before saving
-    @PrePersist
-    protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
+    @Override
+    public Warehouse getWarehouse(Long id) {
+        return warehouseRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Warehouse not found"));
     }
     
-    // Getters and Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-    
-    public String getWarehouseName() { return warehouseName; }
-    public void setWarehouseName(String warehouseName) { 
-        this.warehouseName = warehouseName; 
-    }
-    
-    public String getLocation() { return location; }
-    public void setLocation(String location) { 
-        this.location = location; 
-    }
-    
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { 
-        this.createdAt = createdAt; 
+    @Override
+    public List<Warehouse> getAllWarehouses() {
+        return warehouseRepository.findAll();
     }
 }
