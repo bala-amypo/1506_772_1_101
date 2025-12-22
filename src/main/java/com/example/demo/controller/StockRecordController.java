@@ -39,3 +39,31 @@ public class StockRecordController {
         return stockRecordService.getRecordsByWarehouse(warehouseId);
     }
 }
+*/
+package com.example.demo.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import com.example.demo.model.StockRecord;
+import com.example.demo.service.StockRecordService;
+
+@RestController
+@RequestMapping("/api/stock-records")
+public class StockRecordController {
+
+    @Autowired
+    private StockRecordService stockRecordService;
+
+    @PostMapping("/product/{productId}/warehouse/{warehouseId}")
+    public ResponseEntity<StockRecord> createStockRecord(
+            @PathVariable Long productId,
+            @PathVariable Long warehouseId,
+            @RequestBody StockRecord record) {
+
+        return ResponseEntity.ok(
+                stockRecordService.createStockRecord(productId, warehouseId, record)
+        );
+    }
+}
