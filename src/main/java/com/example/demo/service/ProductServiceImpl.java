@@ -6,38 +6,41 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.example.demo.model.PredictionRule;
-import com.example.demo.repository.PredictionRuleRepository;
-import com.example.demo.service.PredictionService;
+import com.example.demo.exception.ResourceNotFoundException;
+import com.example.demo.model.Product;
+import com.example.demo.repository.ProductRepository;
+import com.example.demo.service.ProductService;
 
 @Service
-public class PredictionServiceImpl implements PredictionService {
+public class ProductServiceImpl implements ProductService {
 
     @Autowired
-    private PredictionRuleRepository predictionRuleRepository;
+    private ProductRepository productRepository;
 
     @Override
-    public PredictionRule createRule(PredictionRule rule) {
+    public Product createProduct(Product product) {
 
-        if (rule.getAverageDaysWindow() == null || rule.getAverageDaysWindow() <= 0) {
-            throw new IllegalArgumentException("averageDaysWindow must be greater than zero");
+        if (product.getProductName() == null || product.getProductName().isEmpty()) {
+            throw new IllegalArgumentException("productName must not be blank");
         }
 
-        if (rule.getMinDailyUsage() > rule.getMaxDailyUsage()) {
-            throw new IllegalArgumentException("minDailyUsage must be less than or equal to maxDailyUsage");
-        }
-
-        predictionRuleRepository.findByRuleName(rule.getRuleName())
-                .ifPresent(r -> {
-                    throw new IllegalArgumentException("Rule name already exists");
+        productRepository.findBySku(product.getSku())
+                .ifPresent(p -> {
+                    throw new IllegalArgumentException("SKU already exists");
                 });
 
-        rule.setCreatedAt(LocalDateTime.now());
-        return predictionRuleRepository.save(rule);
+        product.setCreatedAt(LocalDateTime.now());
+        return productRepository.save(product);
     }
 
     @Override
-    public List<PredictionRule> getAllRules() {
-        return predictionRuleRepository.findAll();
+    public Product getProduct(Long id) {
+        return productRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+    }
+
+    @Override
+    public List<Product> getAllProducts() {
+        return productRepository.findAll();
     }
 }
