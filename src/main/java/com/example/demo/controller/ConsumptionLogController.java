@@ -9,27 +9,28 @@ import com.example.demo.model.ConsumptionLog;
 import com.example.demo.service.ConsumptionLogService;
 
 @RestController
-@RequestMapping("/api/consumption")
+@RequestMapping("/api")
 public class ConsumptionLogController {
 
     @Autowired
-    private ConsumptionLogService consumptionLogService;
+    private StockRecordRepository stockRecordRepository;
 
-    @PostMapping("/{stockRecordId}")
-    public ConsumptionLog addLog(
+    @Autowired
+    private ConsumptionLogRepository consumptionLogRepository;
+
+    @PostMapping("/consumptions/{stockRecordId}")
+    public ResponseEntity<ConsumptionLog> addConsumption(
             @PathVariable Long stockRecordId,
-            @RequestBody ConsumptionLog log) {
+            @RequestBody ConsumptionLog consumptionLog) {
 
-        return consumptionLogService.logConsumption(stockRecordId, log);
-    }
+        StockRecord stockRecord = stockRecordRepository.findById(stockRecordId)
+                .orElseThrow(() -> new RuntimeException("StockRecord not found"));
 
-    @GetMapping("/record/{stockRecordId}")
-    public List<ConsumptionLog> getByStockRecord(@PathVariable Long stockRecordId) {
-        return consumptionLogService.getLogsByStockRecord(stockRecordId);
-    }
+        // Set relationship here
+        consumptionLog.setStockRecord(stockRecord);
 
-    @GetMapping("/{id}")
-    public ConsumptionLog getLog(@PathVariable Long id) {
-        return consumptionLogService.getLog(id);
+        ConsumptionLog savedLog = consumptionLogRepository.save(consumptionLog);
+
+        return ResponseEntity.ok(savedLog);
     }
 }
