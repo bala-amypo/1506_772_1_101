@@ -28,7 +28,7 @@ public class ConsumptionLogController {
         return consumptionLogService.getLogsByStockRecord(stockRecordId);
     }
 
-    @GetMapping("/{id}")
+    @gGetMapping("/{id}")
     public ConsumptionLog getLog(@PathVariable Long id) {
         return consumptionLogService.getLog(id);
     }
