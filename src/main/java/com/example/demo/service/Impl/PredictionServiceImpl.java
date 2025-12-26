@@ -1,4 +1,4 @@
-package com.example.demo.service.impl;
+/*package com.example.demo.service.impl;
 
 import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.model.*;
@@ -71,3 +71,4 @@ public class PredictionServiceImpl implements PredictionService {
         return LocalDate.now().plusDays(Math.max(daysRemaining, 0));
     }
 }
+*/
