@@ -12,7 +12,7 @@ public interface UserService {
     AuthResponse login(AuthRequest request);
 
     User getByEmail(String email);
-}
+}*/
 package com.example.demo.service;
 
 import com.example.demo.dto.AuthRequest;
