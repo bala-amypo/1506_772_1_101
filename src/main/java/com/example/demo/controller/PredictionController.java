@@ -1,27 +1,21 @@
-package com.example.demo.controller;
+package com.example.demo.model;
 
-import java.util.List;
+import jakarta.persistence.*;
+import lombok.*;
+import java.time.LocalDateTime;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+@Entity
+@Table(name = "prediction_rules")
+@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+public class PredictionRule {
 
-import com.example.demo.model.PredictionRule;
-import com.example.demo.service.PredictionService;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-@RestController
-@RequestMapping("/api/predict")
-public class PredictionController {
-
-    @Autowired
-    private PredictionService predictionService;
-
-    @PostMapping("/rules")
-    public PredictionRule addRule(@RequestBody PredictionRule rule) {
-        return predictionService.createRule(rule);
-    }
-
-    @GetMapping("/rules")
-    public List<PredictionRule> getAllRules() {
-        return predictionService.getAllRules();
-    }
+    private String ruleName;
+    private Integer averageDaysWindow;
+    private Integer minDailyUsage;
+    private Integer maxDailyUsage;
+    private LocalDateTime createdAt;
 }

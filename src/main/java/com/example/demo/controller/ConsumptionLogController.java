@@ -1,35 +1,21 @@
-package com.example.demo.controller;
+package com.example.demo.model;
 
-import java.util.List;
+import jakarta.persistence.*;
+import lombok.*;
+import java.time.LocalDate;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+@Entity
+@Table(name = "consumption_logs")
+@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+public class ConsumptionLog {
 
-import com.example.demo.model.ConsumptionLog;
-import com.example.demo.service.ConsumptionLogService;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-@RestController
-@RequestMapping("/api/consumption")
-public class ConsumptionLogController {
+    @ManyToOne
+    private StockRecord stockRecord;
 
-    @Autowired
-    private ConsumptionLogService consumptionLogService;
-
-    @PostMapping("/{stockRecordId}")
-    public ConsumptionLog addLog(
-            @PathVariable Long stockRecordId,
-            @RequestBody ConsumptionLog log) {
-
-        return consumptionLogService.logConsumption(stockRecordId, log);
-    }
-
-    @GetMapping("/record/{stockRecordId}")
-    public List<ConsumptionLog> getByStockRecord(@PathVariable Long stockRecordId) {
-        return consumptionLogService.getLogsByStockRecord(stockRecordId);
-    }
-
-    @GetMapping("/{id}")
-    public ConsumptionLog getLog(@PathVariable Long id) {
-        return consumptionLogService.getLog(id);
-    }
+    private Integer consumedQuantity;
+    private LocalDate consumedDate;
 }
