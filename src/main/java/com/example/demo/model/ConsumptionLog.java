@@ -1,13 +1,6 @@
-package com.example.demo.model;
-
-import jakarta.persistence.*;
-import lombok.*;
-
-import java.time.LocalDate;
-
 @Entity
-@Table(name = "consumption_logs")
-@Getter @Setter
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -17,10 +10,9 @@ public class ConsumptionLog {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private int consumedQuantity;
+    private LocalDate consumedDate;
+
     @ManyToOne
     private StockRecord stockRecord;
-
-    private Integer consumedQuantity;
-
-    private LocalDate consumedDate;
 }
