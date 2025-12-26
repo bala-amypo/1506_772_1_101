@@ -1,9 +1,10 @@
 
 package com.example.demo.repository;
 
-import com.example.demo.model.PredicatoRule;
+import com.example.demo.model.PredicatonRule;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.Optional;public interface PredictionRuleRepository extends JpaRepository<PredictionRule, Long> {
+import java.util.Optional;
+public interface PredictionRuleRepository extends JpaRepository<PredictionRule, Long> {
     Optional<PredictionRule> findByRuleName(String ruleName);
 }
