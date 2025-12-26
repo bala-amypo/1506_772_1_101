@@ -1,4 +1,4 @@
-package com.example.demo.service;
+/*package com.example.demo.service;
 
 import com.example.demo.model.StockRecord;
 
@@ -14,3 +14,4 @@ public interface StockRecordService {
 
     List<StockRecord> getRecordsByWarehouse(Long warehouseId);
 }
+*/
