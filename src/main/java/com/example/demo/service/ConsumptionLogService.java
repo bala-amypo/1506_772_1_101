@@ -1,12 +1,10 @@
-// File: src/main/java/com/example/demo/service/ConsumptionLogService.java
 package com.example.demo.service;
 
 import com.example.demo.model.ConsumptionLog;
-
 import java.util.List;
 
 public interface ConsumptionLogService {
-    ConsumptionLog logConsumption(Long stockRecordId, ConsumptionLog log);
+    ConsumptionLog logConsumption(Long stockRecordId, ConsumptionLog consumptionLog);
     List<ConsumptionLog> getLogsByStockRecord(Long stockRecordId);
-    ConsumptionLog getLog(Long id);
+    Double calculateAverageDailyConsumption(Long stockRecordId, int days);
 }

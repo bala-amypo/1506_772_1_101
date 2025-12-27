@@ -1,45 +1,43 @@
-package com.example.demo.service.impl;
+package com.example.demo.service;
 
 import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.model.Warehouse;
 import com.example.demo.repository.WarehouseRepository;
-import com.example.demo.service.WarehouseService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
 import java.util.List;
 
-@Service("warehouseServiceImpl")
+@Service
+@RequiredArgsConstructor
 public class WarehouseServiceImpl implements WarehouseService {
-
     private final WarehouseRepository warehouseRepository;
-
-    public WarehouseServiceImpl(WarehouseRepository warehouseRepository) {
-        this.warehouseRepository = warehouseRepository;
-    }
-
+    
     @Override
     public Warehouse createWarehouse(Warehouse warehouse) {
-        if (warehouse.getWarehouseName() == null || warehouse.getWarehouseName().isBlank()) {
-            throw new IllegalArgumentException("Warehouse name cannot be empty");
-        }
-
-        if (warehouse.getLocation() == null || warehouse.getLocation().isBlank()) {
-            throw new IllegalArgumentException("Location cannot be empty");
-        }
-
-        warehouse.setCreatedAt(LocalDateTime.now());
         return warehouseRepository.save(warehouse);
     }
-
+    
     @Override
     public Warehouse getWarehouse(Long id) {
         return warehouseRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Warehouse not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Warehouse not found with id: " + id));
     }
-
+    
     @Override
     public List<Warehouse> getAllWarehouses() {
         return warehouseRepository.findAll();
+    }
+    
+    @Override
+    public Warehouse updateWarehouse(Long id, Warehouse warehouse) {
+        Warehouse existing = getWarehouse(id);
+        existing.setWarehouseName(warehouse.getWarehouseName());
+        existing.setLocation(warehouse.getLocation());
+        return warehouseRepository.save(existing);
+    }
+    
+    @Override
+    public void deleteWarehouse(Long id) {
+        warehouseRepository.deleteById(id);
     }
 }
