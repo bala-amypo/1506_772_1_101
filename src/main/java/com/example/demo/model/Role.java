@@ -1,8 +1,6 @@
-// File: src/main/java/com/example/demo/model/Role.java
 package com.example.demo.model;
 
 public enum Role {
     ROLE_USER,
-    ROLE_ADMIN,
-    ROLE_MANAGER
+    ROLE_ADMIN
 }
