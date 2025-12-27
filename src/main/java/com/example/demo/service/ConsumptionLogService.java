@@ -1,37 +1,12 @@
-package com.example.demo.security;
+// File: src/main/java/com/example/demo/service/ConsumptionLogService.java
+package com.example.demo.service;
 
-import com.example.demo.model.User;
-import com.example.demo.repository.UserRepository;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.*;
-import org.springframework.stereotype.Service;
+import com.example.demo.model.ConsumptionLog;
+import java.util.List;
 
-import java.util.stream.Collectors;
-
-@Service
-public class CustomUserDetailsService implements UserDetailsService {
-
-    private final UserRepository userRepository;
-
-    public CustomUserDetailsService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
-
-    @Override
-    public UserDetails loadUserByUsername(String email)
-            throws UsernameNotFoundException {
-
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() ->
-                        new UsernameNotFoundException("User not found"));
-
-        return new org.springframework.security.core.userdetails.User(
-                user.getEmail(),
-                user.getPassword(),
-                user.getRoles()
-                        .stream()
-                        .map(role -> new SimpleGrantedAuthority(role.name()))
-                        .collect(Collectors.toSet())
-        );
-    }
+public interface ConsumptionLogService {
+    ConsumptionLog createLog(ConsumptionLog log);
+    List<ConsumptionLog> getAllLogs();
+    ConsumptionLog getLogById(Long id);
+    void deleteLog(Long id);
 }
