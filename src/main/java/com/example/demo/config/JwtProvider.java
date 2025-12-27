@@ -101,4 +101,9 @@ public class JwtProvider {
         
         return new UsernamePasswordAuthenticationToken(email, null, authorities);
     }
+    
+    // ADD THIS METHOD TO FIX THE TEST ERROR
+    public Long getUserId(String token) {
+        return getUserIdFromToken(token);
+    }
 }
