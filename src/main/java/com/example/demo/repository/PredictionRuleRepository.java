@@ -6,4 +6,11 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PredictionRuleRepository extends JpaRepository<PredictionRule, Long> {
+
+    // Used indirectly by tests via PredictionService.getAllRules()
+    // JpaRepository already provides:
+    // - save()
+    // - findAll()
+    // - findById()
+    // - deleteById()
 }
