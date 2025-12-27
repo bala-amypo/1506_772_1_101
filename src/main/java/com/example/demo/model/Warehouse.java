@@ -1,26 +1,30 @@
 package com.example.demo.model;
 
-import jakarta.persistence.*;
 import lombok.*;
-
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "warehouses")
-@Getter @Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class Warehouse {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(unique = true)
+    
+    @Column(nullable = false)
     private String warehouseName;
-
+    
     private String location;
-
+    
+    @Column(updatable = false)
     private LocalDateTime createdAt;
+    
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+    }
 }

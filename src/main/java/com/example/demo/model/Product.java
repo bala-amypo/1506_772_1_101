@@ -1,37 +1,33 @@
 package com.example.demo.model;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import lombok.*;
-
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(
-    name = "products",
-    uniqueConstraints = {
-        @UniqueConstraint(columnNames = "sku")
-    }
-)
-@Getter
-@Setter
+@Table(name = "products")
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class Product {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @NotBlank(message = "Product name must not be empty")
+    
+    @Column(nullable = false)
     private String productName;
-
-    @NotBlank(message = "SKU must not be empty")
-    @Column(nullable = false, unique = true)
+    
+    @Column(unique = true, nullable = false)
     private String sku;
-
+    
     private String category;
-
+    
+    @Column(updatable = false)
     private LocalDateTime createdAt;
+    
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+    }
 }
