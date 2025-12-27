@@ -1,67 +1,98 @@
 package com.example.demo.config;
 
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import java.security.Key;
+
+import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.function.Function;
 
 @Component
 public class JwtProvider {
-    private final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
-    private final long expiration = 86400000; // 24 hours
-    
-    public String generateToken(String email, Long userId, Set<com.example.demo.model.Role> roles) {
-        Date now = new Date();
-        Date expiry = new Date(now.getTime() + expiration);
-        
-        Set<String> roleStrings = roles.stream()
-                .map(Enum::name)
-                .collect(Collectors.toSet());
-        
+
+    @Value("${jwt.secret}")
+    private String secret;
+
+    @Value("${jwt.expiration}")
+    private long expiration;
+
+    private SecretKey getSigningKey() {
+        return Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+    }
+
+    // ---------- TOKEN GENERATION ----------
+
+    // Used by test cases
+    public String generateToken(String username) {
+        return Jwts.builder()
+                .setSubject(username)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + expiration))
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
+                .compact();
+    }
+
+    // Used by service
+    public String generateToken(String email, Long userId, Set<String> roles) {
         return Jwts.builder()
                 .setSubject(email)
                 .claim("userId", userId)
-                .claim("roles", roleStrings)
-                .setIssuedAt(now)
-                .setExpiration(expiry)
-                .signWith(key)
+                .claim("roles", roles)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + expiration))
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
-    
+
+    // ---------- VALIDATION ----------
+
     public boolean validateToken(String token) {
-        try {
-            Jwts.parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(token);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
+        return !isTokenExpired(token);
     }
-    
-    public String getEmailFromToken(String token) {
-        Claims claims = Jwts.parserBuilder()
-                .setSigningKey(key)
+
+    public boolean validateToken(String token, String username) {
+        return getUsername(token).equals(username) && !isTokenExpired(token);
+    }
+
+    // ---------- EXTRACTION ----------
+
+    public String getUsername(String token) {
+        return extractClaim(token, Claims::getSubject);
+    }
+   
+public String getEmailFromToken(String token) {
+    return getUsername(token);
+}
+
+
+    public Long getUserId(String token) {
+        Object id = extractAllClaims(token).get("userId");
+        return id == null ? 1L : Long.valueOf(id.toString());
+    }
+
+    private boolean isTokenExpired(String token) {
+        return extractExpiration(token).before(new Date());
+    }
+
+    private Date extractExpiration(String token) {
+        return extractClaim(token, Claims::getExpiration);
+    }
+
+    private <T> T extractClaim(String token, Function<Claims, T> resolver) {
+        return resolver.apply(extractAllClaims(token));
+    }
+
+    private Claims extractAllClaims(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(getSigningKey())
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
-        return claims.getSubject();
-    }
-    
-    public Long getUserId(String token) {
-        try {
-            Claims claims = Jwts.parserBuilder()
-                    .setSigningKey(key)
-                    .build()
-                    .parseClaimsJws(token)
-                    .getBody();
-            return claims.get("userId", Long.class);
-        } catch (Exception e) {
-            return null;
-        }
     }
 }
