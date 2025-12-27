@@ -1,26 +1,37 @@
-/*package com.example.demo.service;
+package com.example.demo.security;
 
-import com.example.demo.model.ConsumptionLog;
+import com.example.demo.model.User;
+import com.example.demo.repository.UserRepository;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.*;
+import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.stream.Collectors;
 
-public interface ConsumptionLogService {
+@Service
+public class CustomUserDetailsService implements UserDetailsService {
 
-    ConsumptionLog logConsumption(Long stockRecordId, ConsumptionLog log);
+    private final UserRepository userRepository;
 
-    List<ConsumptionLog> getLogsByStockRecord(Long stockRecordId);
+    public CustomUserDetailsService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
-    ConsumptionLog getLog(Long id);
-}*/
-package com.example.demo.service;
+    @Override
+    public UserDetails loadUserByUsername(String email)
+            throws UsernameNotFoundException {
 
-import com.example.demo.model.ConsumptionLog;
-import java.util.List;
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() ->
+                        new UsernameNotFoundException("User not found"));
 
-public interface ConsumptionLogService {
-    ConsumptionLog logConsumption(Long stockRecordId, ConsumptionLog log);
-    ConsumptionLog getLog(Long id);
-    List<ConsumptionLog> getLogsByStockRecord(Long stockRecordId);
-    void deleteLog(Long id);
+        return new org.springframework.security.core.userdetails.User(
+                user.getEmail(),
+                user.getPassword(),
+                user.getRoles()
+                        .stream()
+                        .map(role -> new SimpleGrantedAuthority(role.name()))
+                        .collect(Collectors.toSet())
+        );
+    }
 }
-
