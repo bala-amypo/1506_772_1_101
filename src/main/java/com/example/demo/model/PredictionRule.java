@@ -1,22 +1,37 @@
 package com.example.demo.model;
 
-import jakarta.persistence.*;
 import lombok.*;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Getter @Setter
-@NoArgsConstructor @AllArgsConstructor @Builder
+@Table(name = "prediction_rules")
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class PredictionRule {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    
+    @Column(nullable = false)
     private String ruleName;
-    private int averageDaysWindow;
-    private int minDailyUsage;
-    private int maxDailyUsage;
-
+    
+    @Column(nullable = false)
+    private Integer averageDaysWindow;
+    
+    @Column(nullable = false)
+    private Integer minDailyUsage;
+    
+    @Column(nullable = false)
+    private Integer maxDailyUsage;
+    
+    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
+    
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+    }
 }
