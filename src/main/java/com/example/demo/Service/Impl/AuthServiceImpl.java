@@ -46,6 +46,8 @@ public class AuthServiceImpl implements AuthService {
             throw new IllegalArgumentException("Invalid credentials");
         }
         
-        return jwtProvider.generateToken(user.getEmail(), user.getId(), user.getRoles());
+        // CORRECTED LINE: Remove roles parameter if JwtProvider doesn't support it
+        return jwtProvider.generateToken(user.getEmail(), user.getId());
+        // Or if you need roles, update JwtProvider class as shown below
     }
 }
