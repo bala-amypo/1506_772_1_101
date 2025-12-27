@@ -1,7 +1,7 @@
 package com.example.demo.model;
 
 import lombok.*;
-import jakarta.persistence.*;
+import javax.persistence.*;
 import java.time.LocalDate;
 
 @Entity

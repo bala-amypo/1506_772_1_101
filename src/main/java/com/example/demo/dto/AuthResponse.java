@@ -14,10 +14,4 @@ public class AuthResponse {
     private String message;
     private String email;
     private Long userId;
-    
-    // For backward compatibility
-    public AuthResponse(String token, String message) {
-        this.token = token;
-        this.message = message;
-    }
 }
