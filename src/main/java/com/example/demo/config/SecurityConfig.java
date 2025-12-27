@@ -15,22 +15,22 @@ import org.springframework.security.web.SecurityFilterChain;
 @RequiredArgsConstructor
 public class SecurityConfig {
     
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-            .csrf().disable()
-            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            .and()
-            .authorizeRequests()
-            .antMatchers("/auth/**").permitAll()
-            .antMatchers("/api/**").authenticated()
-            .anyRequest().authenticated();
-        
-        return http.build();
-    }
-    
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-}
+        @Bean
+            public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+                    http
+                                .csrf().disable()
+                                            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                                                        .and()
+                                                                    .authorizeRequests()
+                                                                                .antMatchers("/auth/**").permitAll()
+                                                                                            .antMatchers("/api/**").authenticated()
+                                                                                                        .anyRequest().authenticated();
+                                                                                                                
+                                                                                                                        return http.build();
+                                                                                                                            }
+                                                                                                                                
+                                                                                                                                    @Bean
+                                                                                                                                        public PasswordEncoder passwordEncoder() {
+                                                                                                                                                return new BCryptPasswordEncoder();
+                                                                                                                                                    }
+                                                                                                                                                    }
