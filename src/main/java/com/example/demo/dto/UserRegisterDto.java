@@ -1,15 +1,10 @@
+// File should be: UserRegisterDto.java
 package com.example.demo.dto;
 
-import lombok.*;
-
-import java.util.Set;
-
-@Getter @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-public class AuthResponse {
-    private String token;
-    private Long userId;
+public class UserRegisterDto {
     private String email;
-    private Set<String> roles;
+    private String password;
+    private String username;
+    
+    // Getters and setters...
 }
