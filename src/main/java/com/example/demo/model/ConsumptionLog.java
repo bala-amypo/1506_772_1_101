@@ -1,34 +1,48 @@
 package com.example.demo.model;
 
+import jakarta.persistence.*;
 import lombok.*;
-import javax.persistence.*;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "consumption_logs")
+@Table(name = "prediction_rules")
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class ConsumptionLog {
+public class PredictionRule {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @ManyToOne
-    @JoinColumn(name = "stock_record_id", nullable = false)
-    private StockRecord stockRecord;
+    @Column(nullable = false, unique = true)
+    private String ruleName;
     
     @Column(nullable = false)
-    private Integer consumedQuantity;
+    private Integer averageDaysWindow;
     
     @Column(nullable = false)
-    private LocalDate consumedDate;
+    private Integer minDailyUsage;
+    
+    @Column(nullable = false)
+    private Integer maxDailyUsage;
+    
+    @Column(updatable = false)
+    private LocalDateTime createdAt;
     
     @PrePersist
     protected void onCreate() {
-        if (consumedDate == null) {
-            consumedDate = LocalDate.now();
+        createdAt = LocalDateTime.now();
+    }
+    
+    @PreUpdate
+    @PrePersist
+    protected void validate() {
+        if (minDailyUsage > maxDailyUsage) {
+            throw new IllegalArgumentException("minDailyUsage cannot be greater than maxDailyUsage");
+        }
+        if (averageDaysWindow <= 0) {
+            throw new IllegalArgumentException("averageDaysWindow must be positive");
         }
     }
 }
