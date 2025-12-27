@@ -1,55 +1,45 @@
-package com.example.demo.service.impl;
+// File: src/main/java/com/example/demo/model/ConsumptionLog.java
+package com.example.demo.model;
 
-import com.example.demo.exception.ResourceNotFoundException;
-import com.example.demo.model.ConsumptionLog;
-import com.example.demo.model.StockRecord;
-import com.example.demo.repository.ConsumptionLogRepository;
-import com.example.demo.repository.StockRecordRepository;
-import com.example.demo.service.ConsumptionLogService;
-import org.springframework.stereotype.Service;
+import jakarta.persistence.*;
+import lombok.*;
 
 import java.time.LocalDate;
-import java.util.List;
+import java.time.LocalDateTime;
 
-@Service("consumptionLogServiceImpl")
-public class ConsumptionLogServiceImpl implements ConsumptionLogService {
+@Entity
+@Table(name = "consumption_logs")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class ConsumptionLog {
 
-    private final ConsumptionLogRepository consumptionLogRepository;
-    private final StockRecordRepository stockRecordRepository;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    public ConsumptionLogServiceImpl(ConsumptionLogRepository consumptionLogRepository,
-                                     StockRecordRepository stockRecordRepository) {
-        this.consumptionLogRepository = consumptionLogRepository;
-        this.stockRecordRepository = stockRecordRepository;
-    }
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "stock_record_id", nullable = false)
+    private StockRecord stockRecord;
 
-    @Override
-    public ConsumptionLog logConsumption(Long stockRecordId, ConsumptionLog log) {
+    @Column(nullable = false)
+    private Integer consumedQuantity;
 
-        StockRecord stockRecord = stockRecordRepository.findById(stockRecordId)
-                .orElseThrow(() -> new ResourceNotFoundException("StockRecord not found"));
+    @Column(nullable = false)
+    private LocalDate consumedDate;
 
-        if (log.getConsumedQuantity() <= 0) {
-            throw new IllegalArgumentException("Invalid consumed quantity");
+    private String notes;
+
+    @Column(nullable = false)
+    private LocalDateTime loggedAt;
+
+    @PrePersist
+    protected void onCreate() {
+        this.loggedAt = LocalDateTime.now();
+        if (this.consumedDate == null) {
+            this.consumedDate = LocalDate.now();
         }
-
-        if (log.getConsumedDate() != null &&
-                log.getConsumedDate().isAfter(LocalDate.now())) {
-            throw new IllegalArgumentException("consumedDate cannot be future");
-        }
-
-        log.setStockRecord(stockRecord);
-        return consumptionLogRepository.save(log);
-    }
-
-    @Override
-    public List<ConsumptionLog> getLogsByStockRecord(Long stockRecordId) {
-        return consumptionLogRepository.findByStockRecordId(stockRecordId);
-    }
-
-    @Override
-    public ConsumptionLog getLog(Long id) {
-        return consumptionLogRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("ConsumptionLog not found"));
     }
 }
