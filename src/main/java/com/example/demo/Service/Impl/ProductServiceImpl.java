@@ -1,83 +1,45 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.model.Product;
-import com.example.demo.repository.ProductRepository;
-import com.example.demo.service.ProductService;
 import com.example.demo.exception.ResourceNotFoundException;
-import lombok.RequiredArgsConstructor;
+import com.example.demo.model.Warehouse;
+import com.example.demo.repository.WarehouseRepository;
+import com.example.demo.service.WarehouseService;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
 import java.util.List;
 
-@Service
-@RequiredArgsConstructor
-public class ProductServiceImpl implements ProductService {
-    
-    private final ProductRepository productRepository;
-    
+@Service("warehouseServiceImpl")
+public class WarehouseServiceImpl implements WarehouseService {
+
+    private final WarehouseRepository warehouseRepository;
+
+    public WarehouseServiceImpl(WarehouseRepository warehouseRepository) {
+        this.warehouseRepository = warehouseRepository;
+    }
+
     @Override
-    @Transactional
-    public Product createProduct(Product product) {
-        // Check if SKU already exists
-        if (productRepository.findBySku(product.getSku()).isPresent()) {
-            throw new IllegalArgumentException("SKU already exists: " + product.getSku());
+    public Warehouse createWarehouse(Warehouse warehouse) {
+        if (warehouse.getWarehouseName() == null || warehouse.getWarehouseName().isBlank()) {
+            throw new IllegalArgumentException("Warehouse name cannot be empty");
         }
-        
-        // Validate required fields
-        if (product.getProductName() == null || product.getProductName().trim().isEmpty()) {
-            throw new IllegalArgumentException("Product name is required");
+
+        if (warehouse.getLocation() == null || warehouse.getLocation().isBlank()) {
+            throw new IllegalArgumentException("Location cannot be empty");
         }
-        
-        if (product.getSku() == null || product.getSku().trim().isEmpty()) {
-            throw new IllegalArgumentException("SKU is required");
-        }
-        
-        return productRepository.save(product);
+
+        warehouse.setCreatedAt(LocalDateTime.now());
+        return warehouseRepository.save(warehouse);
     }
-    
+
     @Override
-    public Product getProduct(Long id) {
-        return productRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + id));
+    public Warehouse getWarehouse(Long id) {
+        return warehouseRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Warehouse not found"));
     }
-    
+
     @Override
-    public List<Product> getAllProducts() {
-        return productRepository.findAll();
-    }
-    
-    @Override
-    @Transactional
-    public Product updateProduct(Long id, Product productDetails) {
-        Product product = getProduct(id);
-        
-        // Check if new SKU conflicts with existing products (if SKU is being updated)
-        if (!product.getSku().equals(productDetails.getSku())) {
-            productRepository.findBySku(productDetails.getSku())
-                    .ifPresent(existing -> {
-                        if (!existing.getId().equals(id)) {
-                            throw new IllegalArgumentException("SKU already exists: " + productDetails.getSku());
-                        }
-                    });
-        }
-        
-        product.setProductName(productDetails.getProductName());
-        product.setSku(productDetails.getSku());
-        product.setCategory(productDetails.getCategory());
-        
-        return productRepository.save(product);
-    }
-    
-    @Override
-    @Transactional
-    public void deleteProduct(Long id) {
-        Product product = getProduct(id);
-        productRepository.delete(product);
-    }
-    
-    @Override
-    public Product getProductBySku(String sku) {
-        return productRepository.findBySku(sku)
-                .orElseThrow(() -> new ResourceNotFoundException("Product not found with SKU: " + sku));
+    public List<Warehouse> getAllWarehouses() {
+        return warehouseRepository.findAll();
     }
 }
