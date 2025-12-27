@@ -29,6 +29,6 @@ public class StockRecordController {
     
     @GetMapping("/product/{productId}")
     public ResponseEntity<List<StockRecord>> getRecordsByProduct(@PathVariable Long productId) {
-        return ResponseEntity.ok(stockRecordService.getRecordsByProduct(productId));
+        return ResponseEntity.ok(stockRecordService.getRecordsBy_product(productId));
     }
 }

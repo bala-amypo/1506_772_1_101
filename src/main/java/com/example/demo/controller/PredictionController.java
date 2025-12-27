@@ -26,7 +26,8 @@ public class PredictionController {
     }
     
     @GetMapping("/restock-date/{stockRecordId}")
-    public ResponseEntity<LocalDate> predictRestockDate(@PathVariable Long stockRecordId) {
-        return ResponseEntity.ok(predictionService.predictRestockDate(stockRecordId));
+    public ResponseEntity<String> predictRestockDate(@PathVariable Long stockRecordId) {
+        LocalDate restockDate = predictionService.predictRestockDate(stockRecordId);
+        return ResponseEntity.ok(restockDate.toString());
     }
 }
