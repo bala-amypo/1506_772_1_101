@@ -1,45 +1,73 @@
-// File: src/main/java/com/example/demo/model/ConsumptionLog.java
-package com.example.demo.model;
+package com.example.demo.service.impl;
 
-import jakarta.persistence.*;
-import lombok.*;
+import com.example.demo.exception.ResourceNotFoundException;
+import com.example.demo.model.ConsumptionLog;
+import com.example.demo.model.StockRecord;
+import com.example.demo.repository.ConsumptionLogRepository;
+import com.example.demo.repository.StockRecordRepository;
+import com.example.demo.service.ConsumptionLogService;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.util.List;
 
-@Entity
-@Table(name = "consumption_logs")
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-public class ConsumptionLog {
+@Service
+public class ConsumptionLogServiceImpl implements ConsumptionLogService {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private final ConsumptionLogRepository consumptionLogRepository;
+    private final StockRecordRepository stockRecordRepository;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "stock_record_id", nullable = false)
-    private StockRecord stockRecord;
+    public ConsumptionLogServiceImpl(ConsumptionLogRepository consumptionLogRepository,
+                                     StockRecordRepository stockRecordRepository) {
+        this.consumptionLogRepository = consumptionLogRepository;
+        this.stockRecordRepository = stockRecordRepository;
+    }
 
-    @Column(nullable = false)
-    private Integer consumedQuantity;
+    @Override
+    @Transactional
+    public ConsumptionLog logConsumption(Long stockRecordId, ConsumptionLog log) {
+        StockRecord stockRecord = stockRecordRepository.findById(stockRecordId)
+                .orElseThrow(() -> new ResourceNotFoundException("StockRecord not found with id: " + stockRecordId));
 
-    @Column(nullable = false)
-    private LocalDate consumedDate;
-
-    private String notes;
-
-    @Column(nullable = false)
-    private LocalDateTime loggedAt;
-
-    @PrePersist
-    protected void onCreate() {
-        this.loggedAt = LocalDateTime.now();
-        if (this.consumedDate == null) {
-            this.consumedDate = LocalDate.now();
+        // Validate the log
+        if (log.getConsumedQuantity() == null || log.getConsumedQuantity() <= 0) {
+            throw new IllegalArgumentException("Consumed quantity must be positive");
         }
+
+        if (log.getConsumedDate() != null && log.getConsumedDate().isAfter(LocalDate.now())) {
+            throw new IllegalArgumentException("Consumption date cannot be in the future");
+        }
+
+        // Update stock quantity
+        Integer currentQuantity = stockRecord.getCurrentQuantity();
+        if (currentQuantity < log.getConsumedQuantity()) {
+            throw new IllegalArgumentException("Insufficient stock. Available: " + currentQuantity + 
+                                               ", Requested: " + log.getConsumedQuantity());
+        }
+        
+        // Update stock record
+        stockRecord.setCurrentQuantity(currentQuantity - log.getConsumedQuantity());
+        stockRecord.setLastUpdated(LocalDate.now());
+        stockRecordRepository.save(stockRecord);
+
+        // Save consumption log
+        log.setStockRecord(stockRecord);
+        return consumptionLogRepository.save(log);
+    }
+
+    @Override
+    public List<ConsumptionLog> getLogsByStockRecord(Long stockRecordId) {
+        // Check if stock record exists
+        if (!stockRecordRepository.existsById(stockRecordId)) {
+            throw new ResourceNotFoundException("StockRecord not found with id: " + stockRecordId);
+        }
+        return consumptionLogRepository.findByStockRecordId(stockRecordId);
+    }
+
+    @Override
+    public ConsumptionLog getLog(Long id) {
+        return consumptionLogRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("ConsumptionLog not found with id: " + id));
     }
 }

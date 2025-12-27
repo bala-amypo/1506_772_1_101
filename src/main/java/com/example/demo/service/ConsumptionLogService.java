@@ -2,11 +2,11 @@
 package com.example.demo.service;
 
 import com.example.demo.model.ConsumptionLog;
+
 import java.util.List;
 
 public interface ConsumptionLogService {
-    ConsumptionLog createLog(ConsumptionLog log);
-    List<ConsumptionLog> getAllLogs();
-    ConsumptionLog getLogById(Long id);
-    void deleteLog(Long id);
+    ConsumptionLog logConsumption(Long stockRecordId, ConsumptionLog log);
+    List<ConsumptionLog> getLogsByStockRecord(Long stockRecordId);
+    ConsumptionLog getLog(Long id);
 }
