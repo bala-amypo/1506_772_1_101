@@ -1,109 +1,67 @@
 package com.example.demo.config;
 
-import com.example.demo.model.Role;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
-import javax.annotation.PostConstruct;
-import java.util.*;
+import java.security.Key;
+import java.util.Date;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
 public class JwtProvider {
+    private final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+    private final long expiration = 86400000; // 24 hours
     
-    @Value("${jwt.secret:defaultSecretKeyForDevelopmentUseOnlyChangeInProduction}")
-    private String secret;
-    
-    @Value("${jwt.expiration:3600000}") // 1 hour default
-    private long validityInMilliseconds;
-    
-    // Method to generate token with roles
-    public String generateToken(String username, Long userId, Set<Role> roles) {
-        Claims claims = Jwts.claims().setSubject(username);
-        claims.put("userId", userId);
-        
-        // Convert roles to list of role names
-        List<String> roleNames = roles.stream()
-                .map(Role::name)
-                .collect(Collectors.toList());
-        claims.put("roles", roleNames);
-        
+    public String generateToken(String email, Long userId, Set<com.example.demo.model.Role> roles) {
         Date now = new Date();
-        Date validity = new Date(now.getTime() + validityInMilliseconds);
+        Date expiry = new Date(now.getTime() + expiration);
+        
+        Set<String> roleStrings = roles.stream()
+                .map(Enum::name)
+                .collect(Collectors.toSet());
         
         return Jwts.builder()
-                .setClaims(claims)
+                .setSubject(email)
+                .claim("userId", userId)
+                .claim("roles", roleStrings)
                 .setIssuedAt(now)
-                .setExpiration(validity)
-                .signWith(SignatureAlgorithm.HS256, secret)
+                .setExpiration(expiry)
+                .signWith(key)
                 .compact();
     }
     
-    // Method to validate token
     public boolean validateToken(String token) {
         try {
-            Jwts.parser()
-                .setSigningKey(secret)
+            Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
                 .parseClaimsJws(token);
             return true;
         } catch (Exception e) {
-            // Token validation failed
             return false;
         }
     }
     
-    // Method to get email/username from token
     public String getEmailFromToken(String token) {
-        return Jwts.parser()
-                .setSigningKey(secret)
-                .parseClaimsJws(token)
-                .getBody()
-                .getSubject();
-    }
-    
-    // Method to get user ID from token
-    public Long getUserIdFromToken(String token) {
-        Claims claims = Jwts.parser()
-                .setSigningKey(secret)
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
                 .parseClaimsJws(token)
                 .getBody();
-        return claims.get("userId", Long.class);
+        return claims.getSubject();
     }
     
-    // Method to get roles from token
-    public List<SimpleGrantedAuthority> getRolesFromToken(String token) {
-        Claims claims = Jwts.parser()
-                .setSigningKey(secret)
-                .parseClaimsJws(token)
-                .getBody();
-        
-        @SuppressWarnings("unchecked")
-        List<String> roles = claims.get("roles", List.class);
-        
-        if (roles == null) {
-            return Collections.emptyList();
-        }
-        
-        return roles.stream()
-                .map(SimpleGrantedAuthority::new)
-                .collect(Collectors.toList());
-    }
-    
-    // Method to get Authentication object from token
-    public Authentication getAuthentication(String token) {
-        String email = getEmailFromToken(token);
-        List<SimpleGrantedAuthority> authorities = getRolesFromToken(token);
-        
-        return new UsernamePasswordAuthenticationToken(email, null, authorities);
-    }
-    
-    // ADD THIS METHOD TO FIX THE TEST ERROR
     public Long getUserId(String token) {
-        return getUserIdFromToken(token);
+        try {
+            Claims claims = Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+            return claims.get("userId", Long.class);
+        } catch (Exception e) {
+            return null;
+        }
     }
 }
