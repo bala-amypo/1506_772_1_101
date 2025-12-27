@@ -1,31 +1,29 @@
 package com.example.demo.model;
 
-import jakarta.persistence.*;
 import lombok.*;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "prediction_rules")
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class PredictionRule {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String ruleName;
     
     @Column(nullable = false)
-    private Integer averageDaysWindow;
+    private Integer averageDaysWindow = 7;
     
-    @Column(nullable = false)
-    private Integer minDailyUsage;
+    private Integer minDailyUsage = 1;
     
-    @Column(nullable = false)
-    private Integer maxDailyUsage;
+    private Integer maxDailyUsage = 10;
     
     @Column(updatable = false)
     private LocalDateTime createdAt;
@@ -33,16 +31,5 @@ public class PredictionRule {
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
-    }
-    
-    @PreUpdate
-    @PrePersist
-    protected void validate() {
-        if (minDailyUsage > maxDailyUsage) {
-            throw new IllegalArgumentException("minDailyUsage cannot be greater than maxDailyUsage");
-        }
-        if (averageDaysWindow <= 0) {
-            throw new IllegalArgumentException("averageDaysWindow must be positive");
-        }
     }
 }
