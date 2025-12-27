@@ -2,33 +2,27 @@ package com.example.demo.controller;
 
 import com.example.demo.model.ConsumptionLog;
 import com.example.demo.service.ConsumptionLogService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import jakarta.validation.Valid;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/consumption")
+@RequiredArgsConstructor
 public class ConsumptionLogController {
-
     private final ConsumptionLogService consumptionLogService;
-
-    public ConsumptionLogController(ConsumptionLogService consumptionLogService) {
-        this.consumptionLogService = consumptionLogService;
-    }
-
+    
     @PostMapping("/{stockRecordId}")
-    public ConsumptionLog create(@PathVariable Long stockRecordId,
-                                 @RequestBody ConsumptionLog log) {
-        return consumptionLogService.logConsumption(stockRecordId, log);
+    public ResponseEntity<ConsumptionLog> logConsumption(
+            @PathVariable Long stockRecordId,
+            @Valid @RequestBody ConsumptionLog consumptionLog) {
+        return ResponseEntity.ok(consumptionLogService.logConsumption(stockRecordId, consumptionLog));
     }
-
+    
     @GetMapping("/record/{stockRecordId}")
-    public List<ConsumptionLog> getByRecord(@PathVariable Long stockRecordId) {
-        return consumptionLogService.getLogsByStockRecord(stockRecordId);
-    }
-
-    @GetMapping("/{id}")
-    public ConsumptionLog get(@PathVariable Long id) {
-        return consumptionLogService.getLog(id);
+    public ResponseEntity<List<ConsumptionLog>> getLogsByStockRecord(@PathVariable Long stockRecordId) {
+        return ResponseEntity.ok(consumptionLogService.getLogsByStockRecord(stockRecordId));
     }
 }
