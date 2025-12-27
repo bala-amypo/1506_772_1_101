@@ -6,4 +6,9 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface WarehouseRepository extends JpaRepository<Warehouse, Long> {
+
+    // Used by WarehouseService:
+    // - save()
+    // - findById()
+    // - findAll()
 }
