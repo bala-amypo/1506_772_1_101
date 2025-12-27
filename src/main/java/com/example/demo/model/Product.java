@@ -1,11 +1,12 @@
 package com.example.demo.model;
 
-import jakarta.persistence.*;
 import lombok.*;
+import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
-@Table(name = "products", uniqueConstraints = @UniqueConstraint(columnNames = "sku"))
+@Table(name = "products")
 @Data
 @Builder
 @NoArgsConstructor
@@ -18,16 +19,14 @@ public class Product {
     @Column(nullable = false)
     private String productName;
     
-    @Column(nullable = false, unique = true)
+    @Column(unique = true, nullable = false)
     private String sku;
     
     private String category;
     
-    @Column(updatable = false)
+    @Column(nullable = false)
     private LocalDateTime createdAt;
     
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-    }
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    private List<StockRecord> stockRecords;
 }
