@@ -18,7 +18,7 @@ public class PredictionController {
 
         public PredictionController(PredictionService predictionService) {
                 this.predictionService = predictionService;
-                    }
+        }
 
                         @GetMapping("/restock-date/{stockRecordId}")
                             public LocalDate predict(@PathVariable Long stockRecordId) {
