@@ -26,7 +26,6 @@ public class JwtUtil {
         return Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
 
-    // ✅ Create JWT
     public String generateToken(Map<String, Object> claims, String subject) {
         return Jwts.builder()
                 .setClaims(claims)
@@ -37,12 +36,10 @@ public class JwtUtil {
                 .compact();
     }
 
-    // ✅ Extract username/email
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
     }
 
-    // ✅ Extract any claim
     public <T> T extractClaim(String token, Function<Claims, T> resolver) {
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(getSigningKey())
@@ -52,7 +49,6 @@ public class JwtUtil {
         return resolver.apply(claims);
     }
 
-    // ✅ Validate token
     public boolean validateToken(String token, String username) {
         return extractUsername(token).equals(username)
                 && extractClaim(token, Claims::getExpiration).after(new Date());
